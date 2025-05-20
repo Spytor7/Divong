@@ -1,0 +1,146 @@
+from pygame import *
+
+# Inicializa Pygame
+init()
+score = [0,0]
+font.init()
+Finish = False
+W_pressed = L_pressed = O_pressed = S_pressed = False
+"""
+Ammo = sprite.Group()
+"""
+class Un_sprite(sprite.Sprite):
+    def __init__(self, image, speed, x, y):
+        super().__init__()
+        self.image = image
+        self.speed = speed
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def move_up(self):
+        self.rect.y -= self.speed
+    
+    def move_down(self):
+        self.rect.y += self.speed
+
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))  # ¡Ahora se dibuja! ✨
+
+class Player(Un_sprite):
+    def movimiento(self):
+        if W_pressed:
+            if self.rect.x > 0:
+                self.move_up()
+        if S_pressed:
+            if self.rect.x < 646:    
+                self.move_down()
+    
+class Player2(Un_sprite):
+    def movimiento(self):
+        if O_pressed:
+            if self.rect.x > 0:
+                self.move_up()
+        if L_pressed:
+            if self.rect.x < 646:    
+                self.move_down()
+
+
+class Ball(sprite.Sprite):
+    def __init__(self, image, speed, x, y):
+        super().__init__()  
+        self.image = image
+        self.speed = speed
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        self.rect.y -= self.speed
+        
+
+
+# Configuración inicial
+window = display.set_mode((700, 500))
+display.set_caption("Space Tax Recaudors")
+background = Un_sprite(transform.scale(image.load("diseño-interior.jpg"), (700, 500)), 0, 0, 0)
+Padre = Player(transform.scale(image.load("Padre.png"), (120, 200)), 5, 50, 400)
+clock = time.Clock()
+game_font = font.SysFont(None, 45)
+whilegame_text = game_font.render(("Score: " + str(score)), True, (255,255,255))
+
+Enemies = sprite.Group()
+
+
+
+
+# )()(
+
+
+# Variables para movimiento continuo
+
+
+"""
+mixer.music.load("SpaceMusic.ogg")
+mixer.music.play()
+"""
+
+
+# Bucle principal del juego
+game = True
+while game:
+    window.fill((0, 0, 0))  # Limpia la pantalla en cada frame
+                
+
+    for e in event.get():
+        if e.type == QUIT:
+            game = False  # Cierra el juego
+        elif e.type == KEYDOWN:  # Detecta cuando se PRESIONA una tecla
+            if e.key == K_w:
+                W_pressed = True
+            
+            if e.key == K_s:
+                S_pressed = True
+
+            if e.key == K_o:
+                O_pressed = True
+
+            if e.key == K_l:
+                L_pressed = True
+            
+        elif e.type == KEYUP:  # Detecta cuando se SUELTA una tecla
+            if e.key == K_w:
+                W_pressed = False
+            
+            if e.key == K_s:
+                S_pressed = False
+
+            if e.key == K_o:
+                O_pressed = False
+
+            if e.key == K_l:
+                L_pressed = False
+
+    background.reset()
+
+    if not Finish:
+        # Movimiento continuo mientras la tecla esté presionada
+        Padre.movimiento()
+
+
+        # Dibuja los elementos en la pantalla
+        Padre.reset()
+
+        window.blit(whilegame_text, (12,12))
+
+
+
+    else:
+        # Si el juego ha terminado, muestra un mensaje
+        lose = game_font.render(("Congrats, you've scored: " + str(score) + " points"), True, (255,255,255))
+        window.blit(lose, (50, 100))
+
+    display.update()  # Siempre actualizar la pantalla
+    clock.tick(60)  # Controla los FPS
+
+quit()
